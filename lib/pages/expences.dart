@@ -37,6 +37,30 @@ class _ExpencesState extends State<Expences> {
     });
   }
 
+  // remove expences
+  void onDeleteExpence(ExpenceModel expence) {
+    // store the deleted expence
+    ExpenceModel deletedExpence = expence;
+    // get the index of the removing expence
+    final int removedIndex = _expenceList.indexOf(expence);
+    setState(() {
+      _expenceList.remove(expence);
+    });
+    // show snackbar
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Delete successfully'),
+        action: SnackBarAction(
+            label: "undo",
+            onPressed: () {
+              setState(() {
+                _expenceList.insert(removedIndex, deletedExpence);
+              });
+            }),
+      ),
+    );
+  }
+
   // function to open a modal overlay
   void _openAddExpencesOverlay() {
     showModalBottomSheet(
@@ -70,7 +94,10 @@ class _ExpencesState extends State<Expences> {
       ),
       body: Column(
         children: [
-          ExpenceList(expenceList: _expenceList),
+          ExpenceList(
+            expenceList: _expenceList,
+            onDeleteExpence: onDeleteExpence,
+          ),
         ],
       ),
     );
